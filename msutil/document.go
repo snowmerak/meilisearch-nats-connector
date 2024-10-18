@@ -2,6 +2,7 @@ package msutil
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"strconv"
 )
@@ -47,14 +48,19 @@ func (d *Document) Types() map[string]reflect.Type {
 
 func (d *Document) Serialize() ([]byte, error) {
 	ds := NewDocuments().Add(*d)
-	return json.Marshal(ds)
+	data, err :=  json.Marshal(ds)
+	if err != nil {
+		return nil, fmt.Errorf("document: serialize: %w", err)
+	}
+
+	return data, nil
 }
 
 func (d *Document) Deserialize(data []byte) error {
 	ds := NewDocuments()
 	err := json.Unmarshal(data, ds)
 	if err != nil {
-		return err
+		return fmt.Errorf("document: deserialize: %w", err)
 	}
 	if len(*ds) == 1 {
 		*d = (*ds)[0]
@@ -105,9 +111,18 @@ func (d *Documents) Range(f func(key int, value any) bool) {
 }
 
 func (d *Documents) Serialize() ([]byte, error) {
-	return json.Marshal(d)
+	data, err := json.Marshal(d)
+	if err != nil {
+		return nil, fmt.Errorf("documents: serialize: %w", err)
+	}
+
+	return data, nil
 }
 
 func (d *Documents) Deserialize(data []byte) error {
-	return json.Unmarshal(data, d)
+	if err := json.Unmarshal(data, d); err != nil {
+		return fmt.Errorf("documents: deserialize: %w", err)
+	}
+
+	return nil
 }
