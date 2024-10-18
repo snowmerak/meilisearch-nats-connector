@@ -1,6 +1,11 @@
 package meilisearchnatsconnector
 
-import "github.com/nats-io/nats.go"
+import (
+	"context"
+	"fmt"
+
+	"github.com/nats-io/nats.go"
+)
 
 type NatsConnectionConfig struct {
 	host string
@@ -42,11 +47,15 @@ type NatsConnection struct {
 	conn *nats.Conn
 }
 
-func NewNatsConnection(config *NatsConnectionConfig) (*NatsConnection, error) {
+func NewNatsConnection(ctx context.Context, config *NatsConnectionConfig) (*NatsConnection, error) {
 	conn, err := nats.Connect(config.host, nats.UserInfo(config.username, config.password), nats.Token(config.token))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("nats: connect: %w", err)
 	}
+
+	context.AfterFunc(ctx, func() {
+		conn.Close()
+	})
 
 	return &NatsConnection{conn: conn}, nil
 }
