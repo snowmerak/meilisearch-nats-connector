@@ -45,12 +45,12 @@ func (d *Document) Types() map[string]reflect.Type {
 	return types
 }
 
-func (d *Document) ToJson() ([]byte, error) {
+func (d *Document) Serialize() ([]byte, error) {
 	ds := NewDocuments().Add(*d)
 	return json.Marshal(ds)
 }
 
-func (d *Document) FromJson(data []byte) error {
+func (d *Document) Deserialize(data []byte) error {
 	ds := NewDocuments()
 	err := json.Unmarshal(data, ds)
 	if err != nil {
@@ -104,10 +104,10 @@ func (d *Documents) Range(f func(key int, value any) bool) {
 	}
 }
 
-func (d *Documents) ToJson() ([]byte, error) {
+func (d *Documents) Serialize() ([]byte, error) {
 	return json.Marshal(d)
 }
 
-func (d *Documents) FromJson(data []byte) error {
+func (d *Documents) Deserialize(data []byte) error {
 	return json.Unmarshal(data, d)
 }

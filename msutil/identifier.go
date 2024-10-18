@@ -1,6 +1,11 @@
 package msutil
 
-import "github.com/snowmerak/meilisearch-nats-connector/gen/model"
+import (
+	"fmt"
+
+	"github.com/snowmerak/meilisearch-nats-connector/gen/model"
+	"google.golang.org/protobuf/proto"
+)
 
 type Identifiers struct {
 	message model.Identifiers
@@ -33,4 +38,22 @@ func (i *Identifiers) Remove(identifier string) *Identifiers {
 	}
 	i.message.Identifiers = identifiers
 	return i
+}
+
+func (i *Identifiers) Serialize() ([]byte, error) {
+	data, err := proto.Marshal(&i.message)
+	if err != nil {
+		return nil, fmt.Errorf("identifiers: serialize: %w", err)
+	}
+
+	return data, nil
+}
+
+func (i *Identifiers) Deserialize(data []byte) error {
+	err := proto.Unmarshal(data, &i.message)
+	if err != nil {
+		return fmt.Errorf("identifiers: deserialize: %w", err)
+	}
+
+	return nil
 }
