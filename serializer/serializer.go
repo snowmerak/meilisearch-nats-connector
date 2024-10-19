@@ -1,4 +1,4 @@
-package meilisearchnatsconnector
+package serializer
 
 type Serializer interface {
 	Serialize() ([]byte, error)
