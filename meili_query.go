@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/meilisearch/meilisearch-go"
+
 	"github.com/snowmerak/meilisearch-nats-connector/msutil"
 )
 
@@ -44,11 +45,43 @@ func UpdateDocuments(c *Client, index string, document []byte) error {
 	return nil
 }
 
-func DeleteDocuments(c *Client, index string, identifiers []string) error {
-	_, err := c.client.Index(index).DeleteDocuments(identifiers)
+func DeleteDocuments(c *Client, index string, identifiers *msutil.Identifiers) error {
+	_, err := c.client.Index(index).DeleteDocuments(identifiers.GetList())
 	if err != nil {
 		return fmt.Errorf("meilisearch: deleteDocument: %w", err)
 	}
 
 	return nil
+}
+
+func UploadSynonyms(c *Client, index string, synonyms *msutil.Synonyms) error {
+	_, err := c.client.Index(index).UpdateSynonyms(synonyms.ToMap())
+	if err != nil {
+		return fmt.Errorf("meilisearch: uploadSynonyms: %w", err)
+	}
+
+	return nil
+}
+
+func ResetSynonyms(c *Client, index string) error {
+	_, err := c.client.Index(index).ResetSynonyms()
+	if err != nil {
+		return fmt.Errorf("meilisearch: resetSynonyms: %w", err)
+	}
+
+	return nil
+}
+
+func GetSynonyms(c *Client, index string) (*msutil.Synonyms, error) {
+	synonyms, err := c.client.Index(index).GetSynonyms()
+	if err != nil {
+		return nil, fmt.Errorf("meilisearch: getSynonyms: %w", err)
+	}
+
+	value := msutil.NewSynonyms()
+	for k, ws := range *synonyms {
+		value.SetList(k, ws)
+	}
+
+	return value, nil
 }
