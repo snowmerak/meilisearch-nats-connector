@@ -7,3 +7,12 @@ package proto;
 message Identifiers {
     repeated string identifiers = 1;
 }
+
+
+message words {
+    repeated string words = 1;
+}
+
+message synonyms {
+    map<string, words> synonyms = 1;
+}
