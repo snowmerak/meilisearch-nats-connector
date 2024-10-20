@@ -4,15 +4,27 @@ option go_package = "github.com/snowmerak/meilisearchnatsconnector/proto";
 
 package proto;
 
+// Identifiers is a list of identifiers
+// Identifiers is used to send a list of identifiers to the server
+// The ID is used to identify the document
 message Identifiers {
     repeated string identifiers = 1;
 }
 
-
+// Words is a list of words
+// Words is used to send a list of words to the server
+// The words are used to update the synonyms
 message words {
     repeated string words = 1;
 }
 
+// Just Synonyms
 message synonyms {
     map<string, words> synonyms = 1;
+}
+
+// Response is a response from the server
+message Response {
+    string status = 1;
+    string message = 2;
 }
