@@ -18,10 +18,28 @@ func Search(c *Client, index string, query string, searchRequest *msutil.SearchR
 	return res, nil
 }
 
-func Create(c *Client, request *msutil.IndexConfig) error {
+func CreateIndex(c *Client, request *msutil.IndexConfig) error {
 	_, err := c.client.CreateIndex((*meilisearch.IndexConfig)(request))
 	if err != nil {
 		return fmt.Errorf("meilisearch: createIndex: %w", err)
+	}
+
+	return nil
+}
+
+func DeleteIndex(c *Client, index string) error {
+	_, err := c.client.DeleteIndex(index)
+	if err != nil {
+		return fmt.Errorf("meilisearch: deleteIndex: %w", err)
+	}
+
+	return nil
+}
+
+func TruncateIndex(c *Client, index string) error {
+	_, err := c.client.Index(index).DeleteAllDocuments()
+	if err != nil {
+		return fmt.Errorf("meilisearch: truncateIndex: %w", err)
 	}
 
 	return nil
